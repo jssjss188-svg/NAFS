@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بنك أسئلة نواتج التعلم التفاعلي</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #3b82f6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .topic-selector {
+            margin-bottom: 20px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid var(--secondary);
+            font-size: 16px;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .question-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .meta-info {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 15px;
+            background: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: #f0f9ff;
+            border-color: var(--secondary);
+        }
+
+        .option-label input {
+            margin-left: 10px;
+        }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+        }
+
+        .progress-bar-container {
+            background: #e2e8f0;
+            border-radius: 8px;
+            height: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            background: var(--success);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .results-panel {
+            display: none;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .badge-success { background-color: var(--success); }
+        .badge-danger { background-color: var(--danger); }
+
+        .indicator-report {
+            margin-top: 15px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 10px;
+        }
+
+        .indicator-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>اختبار نواتج التعلم التفاعلي</h1>
+        <p>العلوم الطبيعية والوراثة — الصفين الخامس والسادس</p>
+    </header>
+
+    <!-- شريط التقدم العام -->
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- قائمة اختيار الموضوع -->
+    <div class="topic-selector">
+        <label for="topicSelect"><strong>اختر الموضوع الرئيسي:</strong></label>
+        <select id="topicSelect" onchange="loadQuestions()">
+            <option value="all">جميع الموضوعات (136 سؤالاً)</option>
+            <option value="1">1. الوراثة</option>
+            <option value="2">2. المادة وتفاعلاتها: الخصائص الفيزيائية</option>
+            <option value="3">3. المادة وتفاعلاتها: التغيرات الكيميائية</option>
+            <option value="4">4. المادة وتفاعلاتها: فهم التفاعلات الكيميائية</option>
+            <option value="5">5. المادة وتفاعلاتها: الخصائص الكيميائية</option>
+            <option value="6">6. الحركة والقوى: أثر القوة</option>
+            <option value="7">7. الحركة والقوى: قوانين نيوتن</option>
+            <option value="8">8. الحركة والقوى: العوامل المؤثرة في القوى</option>
+            <option value="9">9. الطاقة: مفهوم الطاقة والشغل</option>
+            <option value="10">10. الطاقة: مبدأ حفظ الطاقة</option>
+            <option value="11">11. الموجات والاهتزازات: وصف الموجات</option>
+            <option value="12">12. الموجات والاهتزازات: انعكاس وانكسار الضوء</option>
+            <option value="13">13. الكهرومغناطيسية: الشحنة والدوائر</option>
+            <option value="14">14. الكهرومغناطيسية: المغناطيسية</option>
+            <option value="15">15. علوم الأرض والفضاء: أطوار القمر</option>
+            <option value="16">16. علوم الأرض والفضاء: الظواهر المرتبطة بالحركة</option>
+            <option value="17">17. علوم الأرض والفضاء: تأثير الجاذبية</option>
+            <option value="18">18. علوم الأرض والفضاء: سمات المجموعة الشمسية والكون</option>
+        </select>
+    </div>
+
+    <!-- منطقة الأسئلة -->
+    <form id="quizForm">
+        <div id="questionsContainer"></div>
+        <button type="button" class="btn" onclick="submitQuiz()">تسليم الإجابات والحصول على التغذية الراجعة</button>
+    </form>
+
+    <!-- لوحة التغذية الراجعة والنتائج -->
+    <div id="resultsPanel" class="card results-panel">
+        <h2>التقرير والتغذية الراجعة</h2>
+        <p id="scoreOverview"></p>
+        <hr>
+        <h3>التقدم والإتقان بحسب المؤشرات:</h3>
+        <div id="indicatorReport" class="indicator-report"></div>
+    </div>
+</div>
+
+<script>
+// قاعدة البيانات التفاعلية للأسئلة
+const questionsData = [
+    // الموضوع 1: الوراثة
+    {
+        id: 1, topicId: "1", indicator: "1-4-1-5-6", outcome: 1,
+        question: "يلاحظ اختلاف ارتفاع أفراد من النوع الواحد من النباتات، فهذا التباين في الصفات ينتج أساسًا عن:",
+        options: ["أ) نمط التباين بين الصفات الوراثية في مجموعات المخلوقات الحية من نفس النوع", "ب) اختلاف أنواع المخلوقات", "ج) تأثير المناخ فقط", "د) الإضاءة الليلية"],
+        correct: 0
+    },
+    {
+        id: 2, topicId: "1", indicator: "1-4-1-5-6", outcome: 1,
+        question: "أي مما يلي يُعد مثالًا على التباين في الصفات المتوارثة بين أفراد النوع الواحد؟",
+        options: ["أ) اختلاف لون أزهار نباتات من النوع الواحد", "ب) اصفرار ورقة نبات معرَّض للجفاف", "ج) تكسر غصن شجرة بفعل الريح", "د) بلل أوراق نبات بماء المطر"],
+        correct: 0
+    },
+    {
+        id: 3, topicId: "1", indicator: "1-4-1-5-6", outcome: 2,
+        question: "يُستخدم مخطط شجرة العائلة أساسًا في:",
+        options: ["أ) تتبع انتقال الصفات الوراثية من الآباء إلى الأبناء", "ب) حساب أعمار أفراد الأسرة", "ج) تحديد أماكن سكن الأسر", "د) معرفة أرقام هواتف الأقارب"],
+        correct: 0
+    },
+    {
+        id: 4, topicId: "1", indicator: "1-4-1-5-6", outcome: 2,
+        question: "في مخطط شجرة العائلة يُرمز عادةً إلى الذكور بـ:",
+        options: ["أ) المربعات", "ب) الدوائر", "ج) المثلثات", "د) الأشكال النجمية"],
+        correct: 0
+    },
+    {
+        id: 5, topicId: "1", indicator: "1-4-1-5-6", outcome: 3,
+        question: "عند تزاوج نباتين نقيين، أحدهما بأزهار حمراء والآخر بأزهار بيضاء، ظهرت جميع النباتات في الجيل الأول بأزهار حمراء، فاللون الأحمر يمثل صفة:",
+        options: ["أ) سائدة", "ب) متنحية", "ج) مكتسبة", "د) محايدة لا تُورَّث"],
+        correct: 0
+    },
+
+    // الموضوع 2: الخصائص الفيزيائية للمادة
+    {
+        id: 11, topicId: "2", indicator: "1-1-2-5-6", outcome: 1,
+        question: "أي الخصائص التالية تُعد خاصية فيزيائية للمادة يمكن قياسها أو حسابها؟",
+        options: ["أ) الكثافة", "ب) قابلية الاحتراق", "ج) قابلية الصدأ", "د) التفاعل مع الأحماض"],
+        correct: 0
+    },
+    {
+        id: 12, topicId: "2", indicator: "1-1-2-5-6", outcome: 1,
+        question: "وحدة قياس الكثافة في النظام الدولي هي:",
+        options: ["أ) كغم/م³", "ب) متر/ثانية", "ج) نيوتن", "د) جول"],
+        correct: 0
+    },
+
+    // الموضوع 3: التغيرات الكيميائية
+    {
+        id: 21, topicId: "3", indicator: "2-1-2-5-6", outcome: 1,
+        question: "وفقًا لقانون حفظ الكتلة، فإن كتلة المواد الناتجة عن التفاعل الكيميائي تساوي:",
+        options: ["أ) كتلة المواد المتفاعلة", "ب) نصف كتلة المواد المتفاعلة", "ج) ضعف كتلة المواد المتفاعلة", "د) لا علاقة بينهما"],
+        correct: 0
+    },
+
+    // الموضوع 7: قوانين نيوتن
+    {
+        id: 57, topicId: "7", indicator: "2-2-2-5-6", outcome: 2,
+        question: "وحدة قياس السرعة في النظام الدولي هي:",
+        options: ["أ) متر/ثانية", "ب) متر", "ج) كيلوغرام", "د) نيوتن"],
+        correct: 0
+    },
+    {
+        id: 58, topicId: "7", indicator: "2-2-2-5-6", outcome: 2,
+        question: "قطع عدّاء مسافة 100 متر في زمن قدره 10 ثوانٍ، فإن سرعته تساوي:",
+        options: ["أ) 10 م/ث", "ب) 1000 م/ث", "ج) 0.1 م/ث", "د) 110 م/ث"],
+        correct: 0
+    },
+
+    // الموضوع 15: أطوار القمر
+    {
+        id: 113, topicId: "15", indicator: "1-1-3-5-6", outcome: 1,
+        question: "طور القمر الذي يبدو فيه مضاءً بالكامل من جهة الأرض يسمى:",
+        options: ["أ) البدر", "ب) الهلال", "ج) المحاق", "د) التربيع"],
+        correct: 0
+    }
+];
+
+// عرض الأسئلة بحسب التحديد
+function loadQuestions() {
+    const topicId = document.getElementById("topicSelect").value;
+    const container = document.getElementById("questionsContainer");
+    container.innerHTML = "";
+
+    const filtered = topicId === "all" ? questionsData : questionsData.filter(q => q.topicId === topicId);
+
+    filtered.forEach((q, index) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+            <div class="question-title">س${q.id}) ${q.question}</div>
+            <div class="meta-info">المؤشر: ${q.indicator} | ناتج التعلم: ${q.outcome}</div>
+            <div class="options">
+                ${q.options.map((opt, optIndex) => `
+                    <label class="option-label">
+                        <input type="radio" name="q_${q.id}" value="${optIndex}">
+                        ${opt}
+                    </label>
+                `).join('')}
+            </div>
+        `;
+        container.appendChild(card);
+    });
+
+    document.getElementById("resultsPanel").style.display = "none";
+    updateProgressBar(0);
+}
+
+// تقييم الإجابات وإصدار التغذية الراجعة
+function submitQuiz() {
+    const topicId = document.getElementById("topicSelect").value;
+    const filtered = topicId === "all" ? questionsData : questionsData.filter(q => q.topicId === topicId);
+
+    let score = 0;
+    const indicatorStats = {};
+
+    filtered.forEach(q => {
+        const selected = document.querySelector(`input[name="q_${q.id}"]:checked`);
+        const isCorrect = selected && parseInt(selected.value) === q.correct;
+
+        if (isCorrect) score++;
+
+        // إحصائيات المؤشرات
+        if (!indicatorStats[q.indicator]) {
+            indicatorStats[q.indicator] = { correct: 0, total: 0 };
+        }
+        indicatorStats[q.indicator].total++;
+        if (isCorrect) indicatorStats[q.indicator].correct++;
+    });
+
+    // عرض النتيجة العامة
+    const percentage = Math.round((score / filtered.length) * 100);
+    document.getElementById("scoreOverview").innerHTML = `
+        <strong>النتيجة النهائية:</strong> ${score} من ${filtered.length} (${percentage}%)
+    `;
+
+    // عرض تقرير المؤشرات والتغذية الراجعة
+    const reportContainer = document.getElementById("indicatorReport");
+    reportContainer.innerHTML = "";
+
+    for (const [ind, stat] of Object.entries(indicatorStats)) {
+        const indPercent = Math.round((stat.correct / stat.total) * 100);
+        const statusBadge = indPercent >= 80 
+            ? `<span class="badge badge-success">متقن (${indPercent}%)</span>` 
+            : `<span class="badge badge-danger">يحتاج تحسين (${indPercent}%)</span>`;
+
+        const item = document.createElement("div");
+        item.className = "indicator-item";
+        item.innerHTML = `
+            <span>المؤشر العام [${ind}]: الإجابات الصحيحة ${stat.correct} من ${stat.total}</span>
+            ${statusBadge}
+        `;
+        reportContainer.appendChild(item);
+    }
+
+    document.getElementById("resultsPanel").style.display = "block";
+    updateProgressBar(percentage);
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+function updateProgressBar(percent) {
+    document.getElementById("progressBar").style.width = percent + "%";
+}
+
+// تحميل الأسئلة عند البدء
+window.onload = loadQuestions;
+</script>
+
+</body>
+</html>
